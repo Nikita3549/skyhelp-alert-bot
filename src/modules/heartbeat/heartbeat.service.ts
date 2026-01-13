@@ -12,6 +12,9 @@ export class HeartbeatService {
         private readonly alertService: AlertService,
         private readonly systemService: SystemService,
     ) {}
+    async onModuleInit() {
+        await this.sendDailyReport();
+    }
 
     @Cron(CronExpression.EVERY_DAY_AT_9AM)
     private async sendDailyReport() {
