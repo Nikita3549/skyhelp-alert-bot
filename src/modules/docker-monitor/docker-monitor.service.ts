@@ -133,7 +133,7 @@ export class DockerMonitorService implements OnModuleInit {
             `${containerName} ${status.replace('health_status: ', '')}`,
         );
 
-        if (status.startsWith(DEV_CONTAINERS_PREFIX)) {
+        if (containerName.startsWith(DEV_CONTAINERS_PREFIX)) {
             return;
         }
         if (eventName == 'die') {
