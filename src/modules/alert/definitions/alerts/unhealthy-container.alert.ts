@@ -2,11 +2,16 @@ import { BaseAlert } from '../base-alert';
 import { formatDate } from '../../../../common/utils/formatDate';
 import { ISendAlertOptions } from '../../interfaces/send-alert-options.interface';
 import { ContainerIssue } from 'src/modules/docker-monitor/enums/container-issue.enum';
+import { IRamStatus } from '../../../system/interfaces/ram-status.interface';
+import { getSystemResourcesMessage } from '../../utils/get-system-resources-message.util';
+import { ISSDStatus } from '../../../system/interfaces/ssd-status.interface';
 
 interface IUnhealthyContainerAlertData {
     containerName: string;
     logs: string;
     issue: ContainerIssue;
+    ssdStatus: ISSDStatus;
+    ramStatus: IRamStatus;
 }
 
 export class UnhealthyContainerAlert extends BaseAlert {
@@ -34,6 +39,8 @@ export class UnhealthyContainerAlert extends BaseAlert {
             `📦 *Container:* \`${this.data.containerName}\``,
             `📊 *Status:* \`${status}\``,
             `⏰ *Time:* \`${mskTime}\``,
+            '',
+            getSystemResourcesMessage(this.data.ssdStatus, this.data.ramStatus),
             `\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500`,
         ].join('\n');
 

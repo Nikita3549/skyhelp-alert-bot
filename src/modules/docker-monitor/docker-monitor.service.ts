@@ -9,6 +9,7 @@ import { UnknownErrorAlert } from '../alert/definitions/alerts/unknown-error.ale
 import { DEV_CONTAINERS_PREFIX } from './constants/dev-containers-prefix';
 import { IContainersStatus } from './interfaces/system-status.interface';
 import { ContainerIssue } from './enums/container-issue.enum';
+import { SystemService } from '../system/system.service';
 
 @Injectable()
 export class DockerMonitorService implements OnModuleInit {
@@ -19,6 +20,7 @@ export class DockerMonitorService implements OnModuleInit {
     constructor(
         private readonly configService: ConfigService,
         private readonly alertService: AlertService,
+        private readonly systemService: SystemService,
     ) {
         this.docker = new Docker({
             socketPath: this.configService.getOrThrow('DOCKER_SOCKET_PATH'),
@@ -204,11 +206,16 @@ export class DockerMonitorService implements OnModuleInit {
 
         this.alertCooldowns.set(container.id, now);
 
+        const ramStatus = await this.systemService.getRamStatus();
+        const ssdStatus = await this.systemService.getSSDStatus();
+
         await this.alertService.sendAlert(
             new UnhealthyContainerAlert({
                 containerName: container.name,
                 logs: await this.getContainerLogs(container.id),
                 issue: container.issue,
+                ramStatus,
+                ssdStatus,
             }),
         );
     }
