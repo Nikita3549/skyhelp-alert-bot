@@ -13,6 +13,10 @@ export class ExternalApiService {
     > {
         return [
             {
+                api: ExternalApis.CHISINAU_AIRPORT_API,
+                status: await this.chisinauAirportApiHealth(),
+            },
+            {
                 api: ExternalApis.FLIGHT_API,
                 status: await this.flightIoHealth(),
             },
@@ -20,7 +24,62 @@ export class ExternalApiService {
                 api: ExternalApis.FLIGHT_AWARE,
                 status: await this.flightAwareHealth(),
             },
+            {
+                api: ExternalApis.METAR_API,
+                status: await this.metarHealth(),
+            },
         ];
+    }
+
+    private async metarHealth(): Promise<HealthStatus> {
+        try {
+            const { data } = await axios.get(
+                `${this.configService.getOrThrow('METAR_URL')}/metar`,
+                {
+                    params: {
+                        api_key: this.configService.getOrThrow('METAR_API_KEY'),
+                        id: 'LUKK',
+                        time: '2025-12-08T23:07:05Z',
+                    },
+                },
+            );
+
+            if (!data?.status) {
+                return HealthStatus.FAILED;
+            }
+
+            return HealthStatus.OK;
+        } catch (e) {
+            console.log(JSON.stringify(e, null, 2));
+            return HealthStatus.FAILED;
+        }
+    }
+
+    private async chisinauAirportApiHealth(): Promise<HealthStatus> {
+        try {
+            const res = await axios.get(
+                `${this.configService.getOrThrow('CHISINAU_AIRPORT_API_URL')}/flights`,
+                {
+                    params: {
+                        flight_no: `W9 5482`,
+                        date: '2026-01-27',
+                        airline: 'W9',
+                    },
+                },
+            );
+            const flights = res.data.data;
+
+            const flight = flights.at(-1);
+
+            if (!flight) {
+                return HealthStatus.FAILED;
+            }
+
+            return HealthStatus.OK;
+        } catch (e) {
+            console.log(JSON.stringify(e, null, 2));
+            return HealthStatus.FAILED;
+        }
     }
 
     private async flightIoHealth(): Promise<HealthStatus> {
