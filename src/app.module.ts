@@ -8,7 +8,6 @@ import { AlertModule } from './modules/alert/alert.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { HeartbeatModule } from './modules/heartbeat/heartbeat.module';
 import { SystemModule } from './modules/system/system.module';
-import { ControlModule } from './modules/control/control.module';
 import { ExternalApiModule } from './modules/external-api/external-api.module';
 
 @Module({
@@ -24,7 +23,6 @@ import { ExternalApiModule } from './modules/external-api/external-api.module';
         ScheduleModule.forRoot(),
         HeartbeatModule,
         SystemModule,
-        ControlModule,
         ExternalApiModule,
     ],
     controllers: [AppController],

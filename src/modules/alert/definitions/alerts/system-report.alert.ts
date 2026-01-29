@@ -7,24 +7,30 @@ import { getSystemResourcesMessage } from '../../utils/get-system-resources-mess
 import { HealthStatus } from '../../../external-api/enums/health-status.enum';
 import { IExternalApiStatus } from '../../../external-api/interfaces/external-api-status.interface';
 
-interface IDailyReportData {
+interface ISystemReportData {
     ramStatus: IRamStatus;
     ssdStatus: ISSDStatus;
     containersStatus: IContainersStatus;
     externalApisStatus: IExternalApiStatus[];
+    sayGoodMorning: boolean;
 }
 
-export class DailyReportAlert extends BaseAlert {
-    private readonly data: IDailyReportData;
+export class SystemReportAlert extends BaseAlert {
+    private readonly data: ISystemReportData;
 
-    constructor(data: IDailyReportData) {
+    constructor(data: ISystemReportData) {
         super();
         this.data = data;
     }
 
     getText(): string {
-        const { ssdStatus, ramStatus, containersStatus, externalApisStatus } =
-            this.data;
+        const {
+            ssdStatus,
+            ramStatus,
+            containersStatus,
+            externalApisStatus,
+            sayGoodMorning,
+        } = this.data;
 
         const apiSection = externalApisStatus.map((item) => {
             const icon = item.status === HealthStatus.OK ? '✅' : '❌';
@@ -32,8 +38,8 @@ export class DailyReportAlert extends BaseAlert {
         });
 
         const message = [
-            `☀️ *Good morning!*`,
-            '',
+            sayGoodMorning && `☀️ *Good morning!*`,
+            sayGoodMorning && '',
             `📦 *Containers:* ${containersStatus.running} / ${containersStatus.total}`,
             `🟢 *Healthy:* ${containersStatus.total - containersStatus.unhealthy}`,
             '',
@@ -43,7 +49,9 @@ export class DailyReportAlert extends BaseAlert {
             ...apiSection,
             '',
             `_All systems are monitored_`,
-        ].join('\n');
+        ]
+            .filter((m) => typeof m == 'string')
+            .join('\n');
 
         return message;
     }
