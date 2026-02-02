@@ -11,4 +11,8 @@ services:
     restart: always
     command: sh -c "cd /opt/api/ && npm run start:prod"
     networks:
-      - skyhelp_main
+      - prod_db
+
+networks:
+  prod_db:
+    external: true
