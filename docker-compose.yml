@@ -10,3 +10,5 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
     command: sh -c "cd /opt/api/ && npm run start:prod"
+    networks:
+      - skyhelp_main
