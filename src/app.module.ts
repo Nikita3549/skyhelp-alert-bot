@@ -9,6 +9,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { HeartbeatModule } from './modules/heartbeat/heartbeat.module';
 import { SystemModule } from './modules/system/system.module';
 import { ExternalApiModule } from './modules/external-api/external-api.module';
+import { FlightStatusModule } from './modules/flight-status/flight-status.module';
 
 @Module({
     imports: [
@@ -24,6 +25,7 @@ import { ExternalApiModule } from './modules/external-api/external-api.module';
         HeartbeatModule,
         SystemModule,
         ExternalApiModule,
+        FlightStatusModule,
     ],
     controllers: [AppController],
     providers: [AppService],

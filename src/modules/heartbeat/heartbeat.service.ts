@@ -11,6 +11,8 @@ import { IRamStatus } from '../system/interfaces/ram-status.interface';
 import { ISSDStatus } from '../system/interfaces/ssd-status.interface';
 import { IContainersStatus } from '../docker-monitor/interfaces/system-status.interface';
 import { IExternalApiStatus } from '../external-api/interfaces/external-api-status.interface';
+import { FlightStatusAlert } from '../alert/definitions/alerts/flight-status.alert';
+import { FlightStatusService } from '../flight-status/flight-status.service';
 
 @Update()
 @Injectable()
@@ -20,6 +22,7 @@ export class HeartbeatService {
         private readonly alertService: AlertService,
         private readonly systemService: SystemService,
         private readonly externalApiService: ExternalApiService,
+        private readonly flightStatusService: FlightStatusService,
     ) {}
 
     @Cron(CronExpression.EVERY_DAY_AT_6AM)
@@ -30,6 +33,13 @@ export class HeartbeatService {
                 sayGoodMorning: true,
             }),
         );
+    }
+
+    @Command('flights_status')
+    async handleFlightStatusCommand(_ctx: Context) {
+        const stats = await this.flightStatusService.getStats();
+
+        await this.alertService.sendAlert(new FlightStatusAlert(stats));
     }
 
     @Command('status')
