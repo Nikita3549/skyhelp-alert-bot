@@ -38,9 +38,21 @@ export class FlightStatusAlert extends BaseAlert {
             totalBySource[item.source] += item.amount;
         });
 
+        const formatSourceName = (source: string): string => {
+            if (source === FlightStatusSource.OAG) {
+                return 'OAG';
+            }
+
+            return source
+                .toLowerCase()
+                .split('_')
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        };
+
         const formatLine = (source: string, amount: number, indent = '') => {
-            const name = source.replace(/_/g, ' ');
-            return `${indent}· _${this.escape(name)}:_ ${this.escape(amount)}`;
+            const name = formatSourceName(source);
+            return `${indent}· ${this.escape(name)}: ${this.escape(amount)}`;
         };
 
         const totalLines = Object.entries(totalBySource)
@@ -50,7 +62,7 @@ export class FlightStatusAlert extends BaseAlert {
         const monthlySections: string[] = [];
         monthsMap.forEach((sources, month) => {
             const sourceLines = Object.entries(sources)
-                .map(([source, amount]) => formatLine(source, amount, '  '))
+                .map(([source, amount]) => formatLine(source, amount, ''))
                 .join('\n');
 
             monthlySections.push(`*${this.escape(month)}:*\n${sourceLines}`);

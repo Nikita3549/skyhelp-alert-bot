@@ -1,7 +1,7 @@
 export enum FlightStatusSource {
+    CHISINAU_AIRPORT = 'CHISINAU_AIRPORT',
     FLIGHT_AWARE = 'FLIGHT_AWARE',
     FLIGHT_STATS = 'FLIGHT_STATS',
-    OAG = 'OAG',
     FLIGHT_IO = 'FLIGHT_IO',
-    CHISINAU_AIRPORT = 'CHISINAU_AIRPORT',
+    OAG = 'OAG',
 }
